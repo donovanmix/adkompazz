@@ -25,6 +25,10 @@ export const metadata: Metadata = {
   title: 'LLM Seeding Agency | Citation Seeding',
   description: 'Adkompas is an LLM seeding agency specialising in citation seeding, helping brands earn a credible presence across third-party sources that influence AI discovery.", generator: "Adkompas',
   generator: 'v0.app',
+  icons: {
+    icon: '/images/kompas-logo-transparent.png',
+    apple: '/images/kompas-logo-transparent.png',
+  },
 }
 
 export default function RootLayout({
