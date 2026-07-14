@@ -199,6 +199,7 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
   });
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [servicesOpen, setServicesOpen] = useState(false);
+  const [otherText, setOtherText] = useState('');
   const [targetDate, setTargetDate] = useState<Date | null>(null);
 
   const toggleService = (service: string) => {
@@ -208,6 +209,10 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
         : [...prev, service]
     );
   };
+
+  const displayServices = selectedServices.map((s) =>
+    s === 'Other' && otherText.trim() ? `Other: ${otherText.trim()}` : s
+  );
   const [calendarOpen, setCalendarOpen] = useState(false);
 
   const formatDate = (date: Date | null) =>
@@ -233,7 +238,7 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
   };
 
   const handleContinueToWhatsApp = () => {
-    const message = `Hello, I would like to get a quote.\n\nCompany Name: ${formData.companyName}\nName: ${formData.name}\nEmail: ${formData.email}\nContact Number: ${formData.countryCode} ${formData.contactNumber}\nServices: ${selectedServices.join(', ')}\nMOQ: ${formData.moq}\nTarget Delivery Date: ${formatDate(targetDate)}`;
+    const message = `Hello, I would like to get a quote.\n\nCompany Name: ${formData.companyName}\nName: ${formData.name}\nEmail: ${formData.email}\nContact Number: ${formData.countryCode} ${formData.contactNumber}\nServices: ${displayServices.join(', ')}\nMOQ: ${formData.moq}\nTarget Delivery Date: ${formatDate(targetDate)}`;
 
     const encodedMessage = encodeURIComponent(message);
     const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
@@ -441,8 +446,8 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
                             : 'text-gray-400'
                         }
                       >
-                        {selectedServices.length > 0
-                          ? selectedServices.join(', ')
+                        {displayServices.length > 0
+                          ? displayServices.join(', ')
                           : 'Select service(s)'}
                       </span>
                       <svg
@@ -468,6 +473,64 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
                       {SERVICE_OPTIONS.map((service, index) => {
                         const isSelected = selectedServices.includes(service);
                         const letter = String.fromCharCode(65 + index);
+                        const isOther = service === 'Other';
+
+                        if (isOther && isSelected) {
+                          return (
+                            <div
+                              key={service}
+                              className="w-full flex items-center gap-2 rounded-lg border-2 border-emerald-500 bg-white px-2 py-1.5"
+                            >
+                              <button
+                                type="button"
+                                onClick={() => toggleService(service)}
+                                aria-label="Deselect Other"
+                                className="flex h-6 w-6 shrink-0 items-center justify-center rounded text-xs font-bold border border-emerald-300 bg-white text-emerald-700 hover:bg-emerald-50 transition-colors"
+                              >
+                                {letter}
+                              </button>
+                              <input
+                                type="text"
+                                value={otherText}
+                                onChange={(e) => setOtherText(e.target.value)}
+                                onKeyDown={(e) => {
+                                  if (
+                                    e.key === 'Enter' &&
+                                    !e.nativeEvent.isComposing &&
+                                    e.keyCode !== 229
+                                  ) {
+                                    e.preventDefault();
+                                    setServicesOpen(false);
+                                  }
+                                }}
+                                placeholder="Type your answer"
+                                autoFocus
+                                className="flex-1 min-w-0 bg-transparent text-sm text-gray-900 placeholder:text-gray-400 outline-none"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => setServicesOpen(false)}
+                                aria-label="Confirm answer"
+                                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-emerald-600 text-white hover:bg-emerald-700 transition-colors"
+                              >
+                                <svg
+                                  className="w-4 h-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2.5}
+                                    d="M5 13l4 4L19 7"
+                                  />
+                                </svg>
+                              </button>
+                            </div>
+                          );
+                        }
+
                         return (
                           <button
                             key={service}
