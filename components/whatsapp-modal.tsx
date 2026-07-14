@@ -195,7 +195,6 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
     email: '',
     countryCode: '+60',
     contactNumber: '',
-    moq: '',
   });
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [servicesOpen, setServicesOpen] = useState(false);
@@ -238,7 +237,7 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
   };
 
   const handleContinueToWhatsApp = () => {
-    const message = `Hello, I would like to get a quote.\n\nCompany Name: ${formData.companyName}\nName: ${formData.name}\nEmail: ${formData.email}\nContact Number: ${formData.countryCode} ${formData.contactNumber}\nServices: ${displayServices.join(', ')}\nMOQ: ${formData.moq}\nTarget Delivery Date: ${formatDate(targetDate)}`;
+    const message = `Hello, I would like to get a quote.\n\nCompany Name: ${formData.companyName}\nName: ${formData.name}\nEmail: ${formData.email}\nContact Number: ${formData.countryCode} ${formData.contactNumber}\nServices: ${displayServices.join(', ')}\nTarget Delivery Date: ${formatDate(targetDate)}`;
 
     const encodedMessage = encodeURIComponent(message);
     const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
@@ -559,37 +558,6 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
                     </div>
                   </PopoverContent>
                 </Popover>
-              </div>
-
-              {/* MOQ */}
-              <div className="grid grid-cols-1 gap-3 md:gap-4 md:grid-cols-2">
-                <div>
-                  <Label
-                    htmlFor="moq"
-                    className="text-xs font-semibold text-gray-600 uppercase mb-2 block"
-                  >
-                    MOQ
-                  </Label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-500 pointer-events-none z-10 text-base font-bold flex items-center justify-center">#</span>
-                    <Select
-                      value={formData.moq}
-                      onValueChange={(value) => handleSelectChange('moq', value)}
-                    >
-                      <SelectTrigger className="border-gray-200 pl-10">
-                        <SelectValue placeholder="Select quantity" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="100-500">100 - 500 units</SelectItem>
-                        <SelectItem value="500-1000">500 - 1,000 units</SelectItem>
-                        <SelectItem value="1000-5000">
-                          1,000 - 5,000 units
-                        </SelectItem>
-                        <SelectItem value="5000+">5,000+ units</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
               </div>
 
               {/* Target Delivery Date */}
