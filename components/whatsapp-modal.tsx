@@ -19,6 +19,19 @@ interface WhatsAppModalProps {
   onClose: () => void;
 }
 
+const countryCodeFlags: Record<string, string> = {
+  '+1': '🇺🇸 +1',
+  '+44': '🇬🇧 +44',
+  '+60': '🇲🇾 +60',
+  '+65': '🇸🇬 +65',
+  '+86': '🇨🇳 +86',
+  '+81': '🇯🇵 +81',
+  '+91': '🇮🇳 +91',
+  '+33': '🇫🇷 +33',
+  '+49': '🇩🇪 +49',
+  '+39': '🇮🇹 +39',
+};
+
 export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
   const [formData, setFormData] = useState({
     companyName: '',
@@ -212,8 +225,8 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
                         handleSelectChange('countryCode', value)
                       }
                     >
-                      <SelectTrigger className="w-28 border-gray-200">
-                        <SelectValue />
+                      <SelectTrigger className="w-32 border-gray-200">
+                        <span>{countryCodeFlags[formData.countryCode] || '🇺🇸 +1'}</span>
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="+1">🇺🇸 +1</SelectItem>
