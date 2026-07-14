@@ -1,8 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader } from '@/components/ui/dialog';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -44,6 +49,137 @@ function FlagImage({ iso, className }: { iso: string; className?: string }) {
   );
 }
 
+const MONTH_NAMES = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+];
+
+const WEEKDAY_LABELS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+
+interface DeliveryCalendarProps {
+  selectedDate: Date | null;
+  onSelect: (date: Date | null) => void;
+  onClose: () => void;
+}
+
+function DeliveryCalendar({ selectedDate, onSelect, onClose }: DeliveryCalendarProps) {
+  const today = new Date();
+  const [viewDate, setViewDate] = useState(
+    selectedDate ? new Date(selectedDate) : new Date()
+  );
+
+  const year = viewDate.getFullYear();
+  const month = viewDate.getMonth();
+  const firstDayOfWeek = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+  const isSameDay = (a: Date | null, b: Date | null) =>
+    !!a && !!b &&
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate();
+
+  const cells: (number | null)[] = [
+    ...Array.from({ length: firstDayOfWeek }, () => null),
+    ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
+  ];
+
+  return (
+    <div className="w-[340px] sm:w-[400px] p-4">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4">
+        <button
+          type="button"
+          onClick={() => setViewDate(new Date(year, month - 1, 1))}
+          className="w-9 h-9 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 transition-colors"
+          aria-label="Previous month"
+        >
+          <ChevronLeft className="w-4 h-4" />
+        </button>
+        <span className="font-bold text-emerald-700">
+          {MONTH_NAMES[month]} {year}
+        </span>
+        <button
+          type="button"
+          onClick={() => setViewDate(new Date(year, month + 1, 1))}
+          className="w-9 h-9 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 transition-colors"
+          aria-label="Next month"
+        >
+          <ChevronRight className="w-4 h-4" />
+        </button>
+      </div>
+
+      {/* Weekday labels */}
+      <div className="grid grid-cols-7 gap-1 mb-1">
+        {WEEKDAY_LABELS.map((day) => (
+          <div
+            key={day}
+            className="text-center text-xs font-semibold text-gray-400 py-2"
+          >
+            {day}
+          </div>
+        ))}
+      </div>
+
+      {/* Day cells */}
+      <div className="grid grid-cols-7 gap-1">
+        {cells.map((day, i) => {
+          if (day === null) {
+            return <div key={`empty-${i}`} />;
+          }
+          const cellDate = new Date(year, month, day);
+          const isToday = isSameDay(cellDate, today);
+          const isSelected = isSameDay(cellDate, selectedDate);
+          return (
+            <button
+              key={day}
+              type="button"
+              onClick={() => {
+                onSelect(cellDate);
+                onClose();
+              }}
+              className={`h-11 rounded-lg text-sm flex items-center justify-center border transition-colors ${
+                isSelected
+                  ? 'bg-emerald-500 border-emerald-500 text-white font-semibold'
+                  : isToday
+                    ? 'bg-emerald-50 border-emerald-100 text-emerald-800 font-semibold'
+                    : 'bg-gray-50/80 border-gray-100 text-gray-700 hover:bg-emerald-50 hover:border-emerald-100'
+              }`}
+            >
+              {day}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Footer */}
+      <div className="flex items-center justify-between mt-4">
+        <button
+          type="button"
+          onClick={() => {
+            onSelect(null);
+            onClose();
+          }}
+          className="text-sm font-bold text-emerald-700 hover:text-emerald-800 transition-colors"
+        >
+          Clear
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setViewDate(new Date());
+            onSelect(new Date());
+            onClose();
+          }}
+          className="text-sm font-bold text-emerald-700 hover:text-emerald-800 transition-colors"
+        >
+          Today
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
   const [formData, setFormData] = useState({
     companyName: '',
@@ -53,8 +189,14 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
     contactNumber: '',
     printingService: '',
     moq: '',
-    targetDate: '',
   });
+  const [targetDate, setTargetDate] = useState<Date | null>(null);
+  const [calendarOpen, setCalendarOpen] = useState(false);
+
+  const formatDate = (date: Date | null) =>
+    date
+      ? `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`
+      : '';
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -74,7 +216,7 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
   };
 
   const handleContinueToWhatsApp = () => {
-    const message = `Hello, I would like to get a quote.\n\nCompany Name: ${formData.companyName}\nName: ${formData.name}\nEmail: ${formData.email}\nContact Number: ${formData.countryCode} ${formData.contactNumber}\nPrinting Service: ${formData.printingService}\nMOQ: ${formData.moq}\nTarget Delivery Date: ${formData.targetDate}`;
+    const message = `Hello, I would like to get a quote.\n\nCompany Name: ${formData.companyName}\nName: ${formData.name}\nEmail: ${formData.email}\nContact Number: ${formData.countryCode} ${formData.contactNumber}\nPrinting Service: ${formData.printingService}\nMOQ: ${formData.moq}\nTarget Delivery Date: ${formatDate(targetDate)}`;
 
     const encodedMessage = encodeURIComponent(message);
     const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
@@ -354,29 +496,39 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
                 >
                   Target Delivery Date
                 </Label>
-                <div className="relative">
-                  <Input
-                    id="targetDate"
-                    name="targetDate"
-                    type="date"
-                    value={formData.targetDate}
-                    onChange={handleInputChange}
-                    className="pl-10 border-gray-200"
-                  />
-                  <svg
-                    className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-500 pointer-events-none"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+                  <PopoverTrigger asChild>
+                    <button
+                      type="button"
+                      id="targetDate"
+                      className="w-full h-9 flex items-center justify-between rounded-md border border-gray-200 bg-transparent px-3 py-1 text-sm text-left hover:border-emerald-300 transition-colors"
+                    >
+                      <span className={targetDate ? 'text-gray-900' : 'text-gray-400'}>
+                        {targetDate ? formatDate(targetDate) : 'Select date (optional)'}
+                      </span>
+                      <svg
+                        className="w-5 h-5 text-emerald-500 pointer-events-none"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                        />
+                      </svg>
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0 rounded-xl shadow-xl" align="start">
+                    <DeliveryCalendar
+                      selectedDate={targetDate}
+                      onSelect={setTargetDate}
+                      onClose={() => setCalendarOpen(false)}
                     />
-                  </svg>
-                </div>
+                  </PopoverContent>
+                </Popover>
               </div>
 
               {/* Continue to WhatsApp Button */}
