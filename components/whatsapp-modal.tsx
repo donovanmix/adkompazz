@@ -49,6 +49,14 @@ function FlagImage({ iso, className }: { iso: string; className?: string }) {
   );
 }
 
+const SERVICE_OPTIONS = [
+  'Reddit Community Seeding',
+  'Wikipedia Content Management',
+  'Digital PR & Third-Party Publishing',
+  'AI Visibility Audit',
+  'Other',
+];
+
 const MONTH_NAMES = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December',
@@ -187,10 +195,18 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
     email: '',
     countryCode: '+60',
     contactNumber: '',
-    printingService: '',
     moq: '',
   });
+  const [selectedServices, setSelectedServices] = useState<string[]>([]);
   const [targetDate, setTargetDate] = useState<Date | null>(null);
+
+  const toggleService = (service: string) => {
+    setSelectedServices((prev) =>
+      prev.includes(service)
+        ? prev.filter((s) => s !== service)
+        : [...prev, service]
+    );
+  };
   const [calendarOpen, setCalendarOpen] = useState(false);
 
   const formatDate = (date: Date | null) =>
@@ -216,7 +232,7 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
   };
 
   const handleContinueToWhatsApp = () => {
-    const message = `Hello, I would like to get a quote.\n\nCompany Name: ${formData.companyName}\nName: ${formData.name}\nEmail: ${formData.email}\nContact Number: ${formData.countryCode} ${formData.contactNumber}\nPrinting Service: ${formData.printingService}\nMOQ: ${formData.moq}\nTarget Delivery Date: ${formatDate(targetDate)}`;
+    const message = `Hello, I would like to get a quote.\n\nCompany Name: ${formData.companyName}\nName: ${formData.name}\nEmail: ${formData.email}\nContact Number: ${formData.countryCode} ${formData.contactNumber}\nServices: ${selectedServices.join(', ')}\nMOQ: ${formData.moq}\nTarget Delivery Date: ${formatDate(targetDate)}`;
 
     const encodedMessage = encodeURIComponent(message);
     const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
@@ -403,55 +419,48 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
                 </div>
               </div>
 
-              {/* Printing Service and MOQ */}
-              <div className="grid grid-cols-1 gap-3 md:gap-4 md:grid-cols-2">
-                <div>
-                  <Label
-                    htmlFor="printingService"
-                    className="text-xs font-semibold text-gray-600 uppercase mb-2 block"
-                  >
-                    Printing Service
-                  </Label>
-                  <div className="relative">
-                    <svg
-                      className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-500 pointer-events-none z-10"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                      />
-                    </svg>
-                    <Select
-                      value={formData.printingService}
-                      onValueChange={(value) =>
-                        handleSelectChange('printingService', value)
-                      }
-                    >
-                      <SelectTrigger className="border-gray-200 pl-10">
-                        <SelectValue placeholder="Select printing service" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="offset-printing">
-                          Offset Printing
-                        </SelectItem>
-                        <SelectItem value="digital-printing">
-                          Digital Printing
-                        </SelectItem>
-                        <SelectItem value="screen-printing">
-                          Screen Printing
-                        </SelectItem>
-                        <SelectItem value="flexography">Flexography</SelectItem>
-                        <SelectItem value="gravure">Gravure</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+              {/* Services multi-select */}
+              <div>
+                <Label className="text-xs font-semibold text-gray-600 uppercase mb-1 block">
+                  What service(s) are you looking at from us ?
+                </Label>
+                <p className="text-xs text-gray-400 mb-2">
+                  Choose as many as you like
+                </p>
+                <div className="space-y-2">
+                  {SERVICE_OPTIONS.map((service, index) => {
+                    const isSelected = selectedServices.includes(service);
+                    const letter = String.fromCharCode(65 + index);
+                    return (
+                      <button
+                        key={service}
+                        type="button"
+                        onClick={() => toggleService(service)}
+                        aria-pressed={isSelected}
+                        className={`w-full flex items-center gap-3 rounded-lg border-2 px-3 py-2.5 text-left text-sm transition-colors ${
+                          isSelected
+                            ? 'border-emerald-500 bg-white text-emerald-700 font-medium'
+                            : 'border-transparent bg-emerald-50/60 text-emerald-800 hover:bg-emerald-50'
+                        }`}
+                      >
+                        <span
+                          className={`flex h-6 w-6 shrink-0 items-center justify-center rounded text-xs font-bold ${
+                            isSelected
+                              ? 'bg-emerald-600 text-white'
+                              : 'border border-emerald-300 bg-white text-emerald-700'
+                          }`}
+                        >
+                          {letter}
+                        </span>
+                        {service}
+                      </button>
+                    );
+                  })}
                 </div>
+              </div>
 
+              {/* MOQ */}
+              <div className="grid grid-cols-1 gap-3 md:gap-4 md:grid-cols-2">
                 <div>
                   <Label
                     htmlFor="moq"
