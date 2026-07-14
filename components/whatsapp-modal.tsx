@@ -58,14 +58,14 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl p-0 gap-0 rounded-xl">
+      <DialogContent className="max-w-4xl w-full p-0 gap-0 rounded-xl">
         <DialogHeader className="sr-only">
           <h2>Get Your Free Quote</h2>
         </DialogHeader>
 
         <div className="flex h-full">
           {/* Left Side - WhatsApp Info */}
-          <div className="hidden md:flex md:w-1/3 bg-emerald-50 flex-col items-center justify-center p-8 text-emerald-900 rounded-l-xl">
+          <div className="hidden md:flex md:w-[280px] bg-emerald-50 flex-col items-center justify-center p-8 text-emerald-900 rounded-l-xl">
             <div className="mb-4 w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center">
               <img
                 src="https://thesvg.org/icons/whatsapp/default.svg"
