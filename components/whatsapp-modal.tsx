@@ -461,7 +461,7 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
                     </button>
                   </PopoverTrigger>
                   <PopoverContent
-                    className="w-[var(--radix-popover-trigger-width)] p-2 rounded-xl shadow-xl"
+                    className="w-auto p-2 rounded-xl shadow-xl"
                     align="start"
                   >
                     <div className="space-y-1.5">
