@@ -71,7 +71,7 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl w-[95vw] md:w-full p-0 gap-0 rounded-xl max-h-[95vh] overflow-y-auto">
+      <DialogContent className="max-w-6xl w-[95vw] md:w-full p-0 gap-0 rounded-xl max-h-[95vh] overflow-y-auto">
         <DialogHeader className="sr-only">
           <h2>Get Your Free Quote</h2>
         </DialogHeader>
