@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader } from '@/components/ui/dialog';
 import {
   Popover,
@@ -255,13 +255,6 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
 
           {/* Right Side - Form */}
           <div className="flex-1 p-6 md:p-8 lg:p-10 md:rounded-r-xl rounded-b-xl bg-white relative">
-            <button
-              onClick={onClose}
-              className="absolute right-4 md:right-6 top-4 md:top-6 text-gray-300 hover:text-gray-400 transition-colors"
-            >
-              <X className="w-6 h-6" />
-            </button>
-
             <div className="mt-6 md:mt-4 space-y-3 md:space-y-4">
               {/* Company Name and Name */}
               <div className="grid grid-cols-1 gap-3 md:gap-4 md:grid-cols-2">
