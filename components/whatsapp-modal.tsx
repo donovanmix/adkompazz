@@ -226,7 +226,7 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
                       }
                     >
                       <SelectTrigger className="w-32 border-gray-200">
-                        <SelectValue />
+                        <SelectValue placeholder={`${countryCodeFlags[formData.countryCode]?.flag || '🇺🇸'} ${countryCodeFlags[formData.countryCode]?.code || '+1'}`} />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="+1">🇺🇸 +1</SelectItem>
