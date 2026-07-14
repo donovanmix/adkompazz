@@ -58,14 +58,15 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl w-full p-0 gap-0 rounded-xl">
+      <DialogContent className="max-w-4xl w-[95vw] md:w-full p-0 gap-0 rounded-xl max-h-[95vh] overflow-y-auto">
         <DialogHeader className="sr-only">
           <h2>Get Your Free Quote</h2>
         </DialogHeader>
 
-        <div className="flex h-full">
+        <div className="flex flex-col md:flex-row h-full">
           {/* Left Side - WhatsApp Info */}
-          <div className="hidden md:flex md:w-[280px] bg-emerald-50 flex-col items-center justify-center p-8 text-emerald-900 rounded-l-xl">
+          <div className="w-full md:w-[280px] bg-emerald-50 flex-col items-center justify-center p-6 md:p-8 text-emerald-900 md:rounded-l-xl rounded-t-xl flex">
+
             <div className="mb-4 w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center">
               <img
                 src="https://thesvg.org/icons/whatsapp/default.svg"
@@ -86,17 +87,17 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
           </div>
 
           {/* Right Side - Form */}
-          <div className="flex-1 p-8 md:rounded-r-xl rounded-xl bg-white">
+          <div className="flex-1 p-6 md:p-8 md:rounded-r-xl rounded-b-xl bg-white relative">
             <button
               onClick={onClose}
-              className="absolute right-6 top-6 text-gray-300 hover:text-gray-400 transition-colors"
+              className="absolute right-4 md:right-6 top-4 md:top-6 text-gray-300 hover:text-gray-400 transition-colors"
             >
               <X className="w-6 h-6" />
             </button>
 
-            <div className="mt-4 space-y-5">
+            <div className="mt-6 md:mt-4 space-y-4 md:space-y-5">
               {/* Company Name and Name */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-3 md:gap-4 md:grid-cols-2">
                 <div>
                   <Label
                     htmlFor="companyName"
@@ -163,7 +164,7 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
               </div>
 
               {/* Email and Contact Number */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-3 md:gap-4 md:grid-cols-2">
                 <div>
                   <Label
                     htmlFor="email"
@@ -242,7 +243,7 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
               </div>
 
               {/* Printing Service and MOQ */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-3 md:gap-4 md:grid-cols-2">
                 <div>
                   <Label
                     htmlFor="printingService"
@@ -355,7 +356,7 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
               {/* Continue to WhatsApp Button */}
               <Button
                 onClick={handleContinueToWhatsApp}
-                className="w-full mt-8 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 rounded-full text-base flex items-center justify-center gap-2"
+                className="w-full mt-4 md:mt-8 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 md:py-4 rounded-full text-sm md:text-base flex items-center justify-center gap-2"
               >
                 <img
                   src="https://thesvg.org/icons/whatsapp/default.svg"
