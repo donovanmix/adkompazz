@@ -19,18 +19,30 @@ interface WhatsAppModalProps {
   onClose: () => void;
 }
 
-const countryCodeFlags: Record<string, { flag: string; code: string; label: string }> = {
-  '+1': { flag: '🇺🇸', code: '+1', label: 'US' },
-  '+44': { flag: '🇬🇧', code: '+44', label: 'UK' },
-  '+60': { flag: '🇲🇾', code: '+60', label: 'MY' },
-  '+65': { flag: '🇸🇬', code: '+65', label: 'SG' },
-  '+86': { flag: '🇨🇳', code: '+86', label: 'CN' },
-  '+81': { flag: '🇯🇵', code: '+81', label: 'JP' },
-  '+91': { flag: '🇮🇳', code: '+91', label: 'IN' },
-  '+33': { flag: '🇫🇷', code: '+33', label: 'FR' },
-  '+49': { flag: '🇩🇪', code: '+49', label: 'DE' },
-  '+39': { flag: '🇮🇹', code: '+39', label: 'IT' },
+const countryCodeFlags: Record<string, { iso: string; code: string; label: string }> = {
+  '+1': { iso: 'us', code: '+1', label: 'US' },
+  '+44': { iso: 'gb', code: '+44', label: 'UK' },
+  '+60': { iso: 'my', code: '+60', label: 'MY' },
+  '+65': { iso: 'sg', code: '+65', label: 'SG' },
+  '+86': { iso: 'cn', code: '+86', label: 'CN' },
+  '+81': { iso: 'jp', code: '+81', label: 'JP' },
+  '+91': { iso: 'in', code: '+91', label: 'IN' },
+  '+33': { iso: 'fr', code: '+33', label: 'FR' },
+  '+49': { iso: 'de', code: '+49', label: 'DE' },
+  '+39': { iso: 'it', code: '+39', label: 'IT' },
 };
+
+function FlagImage({ iso, className }: { iso: string; className?: string }) {
+  return (
+    <img
+      src={`https://flagcdn.com/w40/${iso}.png`}
+      alt=""
+      width={20}
+      height={15}
+      className={className || 'inline-block h-[15px] w-5 rounded-[2px] object-cover'}
+    />
+  );
+}
 
 export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
   const [formData, setFormData] = useState({
@@ -226,22 +238,20 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
                       }
                     >
                       <SelectTrigger className="w-32 border-gray-200 flex items-center justify-between">
-                        <span className="flex items-center gap-1">
-                          <span>{countryCodeFlags[formData.countryCode]?.flag || '🇺🇸'}</span>
+                        <span className="flex items-center gap-1.5">
+                          <FlagImage iso={countryCodeFlags[formData.countryCode]?.iso || 'us'} />
                           <span>{countryCodeFlags[formData.countryCode]?.code || '+1'}</span>
                         </span>
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="+1">🇺🇸 +1</SelectItem>
-                        <SelectItem value="+44">🇬🇧 +44</SelectItem>
-                        <SelectItem value="+60">🇲🇾 +60</SelectItem>
-                        <SelectItem value="+65">🇸🇬 +65</SelectItem>
-                        <SelectItem value="+86">🇨🇳 +86</SelectItem>
-                        <SelectItem value="+81">🇯🇵 +81</SelectItem>
-                        <SelectItem value="+91">🇮🇳 +91</SelectItem>
-                        <SelectItem value="+33">🇫🇷 +33</SelectItem>
-                        <SelectItem value="+49">🇩🇪 +49</SelectItem>
-                        <SelectItem value="+39">🇮🇹 +39</SelectItem>
+                        {Object.values(countryCodeFlags).map((country) => (
+                          <SelectItem key={country.code} value={country.code}>
+                            <span className="flex items-center gap-2">
+                              <FlagImage iso={country.iso} />
+                              <span>{country.code}</span>
+                            </span>
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <div className="relative flex-1">
