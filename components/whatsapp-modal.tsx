@@ -198,6 +198,7 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
     moq: '',
   });
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
+  const [servicesOpen, setServicesOpen] = useState(false);
   const [targetDate, setTargetDate] = useState<Date | null>(null);
 
   const toggleService = (service: string) => {
@@ -427,36 +428,74 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
                 <p className="text-xs text-gray-400 mb-2">
                   Choose as many as you like
                 </p>
-                <div className="space-y-2">
-                  {SERVICE_OPTIONS.map((service, index) => {
-                    const isSelected = selectedServices.includes(service);
-                    const letter = String.fromCharCode(65 + index);
-                    return (
-                      <button
-                        key={service}
-                        type="button"
-                        onClick={() => toggleService(service)}
-                        aria-pressed={isSelected}
-                        className={`w-full flex items-center gap-3 rounded-lg border-2 px-3 py-2.5 text-left text-sm transition-colors ${
-                          isSelected
-                            ? 'border-emerald-500 bg-white text-emerald-700 font-medium'
-                            : 'border-transparent bg-emerald-50/60 text-emerald-800 hover:bg-emerald-50'
-                        }`}
+                <Popover open={servicesOpen} onOpenChange={setServicesOpen}>
+                  <PopoverTrigger asChild>
+                    <button
+                      type="button"
+                      className="w-full h-9 flex items-center justify-between rounded-md border border-gray-200 bg-transparent px-3 py-1 text-sm text-left hover:border-emerald-300 transition-colors"
+                    >
+                      <span
+                        className={
+                          selectedServices.length > 0
+                            ? 'text-gray-900 truncate'
+                            : 'text-gray-400'
+                        }
                       >
-                        <span
-                          className={`flex h-6 w-6 shrink-0 items-center justify-center rounded text-xs font-bold ${
-                            isSelected
-                              ? 'bg-emerald-600 text-white'
-                              : 'border border-emerald-300 bg-white text-emerald-700'
-                          }`}
-                        >
-                          {letter}
-                        </span>
-                        {service}
-                      </button>
-                    );
-                  })}
-                </div>
+                        {selectedServices.length > 0
+                          ? selectedServices.join(', ')
+                          : 'Select service(s)'}
+                      </span>
+                      <svg
+                        className="w-4 h-4 text-gray-400 shrink-0 ml-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    className="w-[var(--radix-popover-trigger-width)] p-2 rounded-xl shadow-xl"
+                    align="start"
+                  >
+                    <div className="space-y-1.5">
+                      {SERVICE_OPTIONS.map((service, index) => {
+                        const isSelected = selectedServices.includes(service);
+                        const letter = String.fromCharCode(65 + index);
+                        return (
+                          <button
+                            key={service}
+                            type="button"
+                            onClick={() => toggleService(service)}
+                            aria-pressed={isSelected}
+                            className={`w-full flex items-center gap-3 rounded-lg border-2 px-3 py-2 text-left text-sm transition-colors ${
+                              isSelected
+                                ? 'border-emerald-500 bg-white text-emerald-700 font-medium'
+                                : 'border-transparent bg-emerald-50/60 text-emerald-800 hover:bg-emerald-50'
+                            }`}
+                          >
+                            <span
+                              className={`flex h-6 w-6 shrink-0 items-center justify-center rounded text-xs font-bold ${
+                                isSelected
+                                  ? 'bg-emerald-600 text-white'
+                                  : 'border border-emerald-300 bg-white text-emerald-700'
+                              }`}
+                            >
+                              {letter}
+                            </span>
+                            {service}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </PopoverContent>
+                </Popover>
               </div>
 
               {/* MOQ */}
