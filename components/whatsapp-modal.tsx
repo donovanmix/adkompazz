@@ -71,14 +71,14 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-[90vw] md:w-[85vw] lg:w-[80vw] max-w-7xl p-0 gap-0 rounded-xl max-h-[95vh] overflow-y-auto">
+      <DialogContent className="w-[95vw] md:w-[90vw] max-w-full p-0 gap-0 rounded-xl max-h-[95vh] overflow-y-auto">
         <DialogHeader className="sr-only">
           <h2>Get Your Free Quote</h2>
         </DialogHeader>
 
         <div className="flex flex-col md:flex-row h-full">
           {/* Left Side - WhatsApp Info */}
-          <div className="w-full md:w-[260px] bg-emerald-50 flex-col items-center justify-center p-6 md:p-6 text-emerald-900 md:rounded-l-xl rounded-t-xl flex">
+          <div className="w-full md:w-[300px] bg-emerald-50 flex-col items-center justify-center p-6 md:p-8 text-emerald-900 md:rounded-l-xl rounded-t-xl flex">
 
             <div className="mb-4 w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center">
               <img
@@ -100,7 +100,7 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
           </div>
 
           {/* Right Side - Form */}
-          <div className="flex-1 p-6 md:p-6 lg:p-7 md:rounded-r-xl rounded-b-xl bg-white relative">
+          <div className="flex-1 p-6 md:p-8 lg:p-10 md:rounded-r-xl rounded-b-xl bg-white relative">
             <button
               onClick={onClose}
               className="absolute right-4 md:right-6 top-4 md:top-6 text-gray-300 hover:text-gray-400 transition-colors"
