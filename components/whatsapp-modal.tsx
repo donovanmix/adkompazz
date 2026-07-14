@@ -185,7 +185,7 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
     companyName: '',
     name: '',
     email: '',
-    countryCode: '+1',
+    countryCode: '+60',
     contactNumber: '',
     printingService: '',
     moq: '',
@@ -400,7 +400,7 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
                       <Input
                         id="contactNumber"
                         name="contactNumber"
-                        placeholder="e.g. 12-345 6789"
+                        placeholder="Invalid number. e.g. 12-345 6789"
                         value={formData.contactNumber}
                         onChange={handleInputChange}
                         className="border-gray-200"
