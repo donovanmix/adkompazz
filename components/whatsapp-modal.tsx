@@ -19,17 +19,17 @@ interface WhatsAppModalProps {
   onClose: () => void;
 }
 
-const countryCodeFlags: Record<string, string> = {
-  '+1': '🇺🇸 +1',
-  '+44': '🇬🇧 +44',
-  '+60': '🇲🇾 +60',
-  '+65': '🇸🇬 +65',
-  '+86': '🇨🇳 +86',
-  '+81': '🇯🇵 +81',
-  '+91': '🇮🇳 +91',
-  '+33': '🇫🇷 +33',
-  '+49': '🇩🇪 +49',
-  '+39': '🇮🇹 +39',
+const countryCodeFlags: Record<string, { flag: string; code: string; label: string }> = {
+  '+1': { flag: '🇺🇸', code: '+1', label: 'US' },
+  '+44': { flag: '🇬🇧', code: '+44', label: 'UK' },
+  '+60': { flag: '🇲🇾', code: '+60', label: 'MY' },
+  '+65': { flag: '🇸🇬', code: '+65', label: 'SG' },
+  '+86': { flag: '🇨🇳', code: '+86', label: 'CN' },
+  '+81': { flag: '🇯🇵', code: '+81', label: 'JP' },
+  '+91': { flag: '🇮🇳', code: '+91', label: 'IN' },
+  '+33': { flag: '🇫🇷', code: '+33', label: 'FR' },
+  '+49': { flag: '🇩🇪', code: '+49', label: 'DE' },
+  '+39': { flag: '🇮🇹', code: '+39', label: 'IT' },
 };
 
 export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
@@ -225,20 +225,23 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
                         handleSelectChange('countryCode', value)
                       }
                     >
-                      <SelectTrigger className="w-32 border-gray-200">
-                        <span>{countryCodeFlags[formData.countryCode] || '🇺🇸 +1'}</span>
+                      <SelectTrigger className="w-28 border-gray-200">
+                        <span className="flex items-center gap-1">
+                          <span>{countryCodeFlags[formData.countryCode]?.flag || '🇺🇸'}</span>
+                          <span>{countryCodeFlags[formData.countryCode]?.code || '+1'}</span>
+                        </span>
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="+1">🇺🇸 +1</SelectItem>
-                        <SelectItem value="+44">🇬🇧 +44</SelectItem>
-                        <SelectItem value="+60">🇲🇾 +60</SelectItem>
-                        <SelectItem value="+65">🇸🇬 +65</SelectItem>
-                        <SelectItem value="+86">🇨🇳 +86</SelectItem>
-                        <SelectItem value="+81">🇯🇵 +81</SelectItem>
-                        <SelectItem value="+91">🇮🇳 +91</SelectItem>
-                        <SelectItem value="+33">🇫🇷 +33</SelectItem>
-                        <SelectItem value="+49">🇩🇪 +49</SelectItem>
-                        <SelectItem value="+39">🇮🇹 +39</SelectItem>
+                        <SelectItem value="+1"><span className="flex items-center gap-2"><span>🇺🇸</span><span>+1</span></span></SelectItem>
+                        <SelectItem value="+44"><span className="flex items-center gap-2"><span>🇬🇧</span><span>+44</span></span></SelectItem>
+                        <SelectItem value="+60"><span className="flex items-center gap-2"><span>🇲🇾</span><span>+60</span></span></SelectItem>
+                        <SelectItem value="+65"><span className="flex items-center gap-2"><span>🇸🇬</span><span>+65</span></span></SelectItem>
+                        <SelectItem value="+86"><span className="flex items-center gap-2"><span>🇨🇳</span><span>+86</span></span></SelectItem>
+                        <SelectItem value="+81"><span className="flex items-center gap-2"><span>🇯🇵</span><span>+81</span></span></SelectItem>
+                        <SelectItem value="+91"><span className="flex items-center gap-2"><span>🇮🇳</span><span>+91</span></span></SelectItem>
+                        <SelectItem value="+33"><span className="flex items-center gap-2"><span>🇫🇷</span><span>+33</span></span></SelectItem>
+                        <SelectItem value="+49"><span className="flex items-center gap-2"><span>🇩🇪</span><span>+49</span></span></SelectItem>
+                        <SelectItem value="+39"><span className="flex items-center gap-2"><span>🇮🇹</span><span>+39</span></span></SelectItem>
                       </SelectContent>
                     </Select>
                     <div className="relative flex-1">
