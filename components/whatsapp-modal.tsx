@@ -207,6 +207,12 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
         ? prev.filter((s) => s !== service)
         : [...prev, service]
     );
+    setErrors((prev) => {
+      if (!prev.services) return prev;
+      const next = { ...prev };
+      delete next.services;
+      return next;
+    });
   };
 
   const displayServices = selectedServices.map((s) =>
@@ -227,6 +233,12 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
       ...prev,
       [name]: value,
     }));
+    setErrors((prev) => {
+      if (!prev[name]) return prev;
+      const next = { ...prev };
+      delete next[name];
+      return next;
+    });
   };
 
   const handleSelectChange = (name: string, value: string) => {
@@ -236,7 +248,36 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
     }));
   };
 
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+    if (!formData.companyName.trim()) {
+      newErrors.companyName = 'Company name is required';
+    }
+    if (!formData.name.trim()) {
+      newErrors.name = 'Name is required';
+    }
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+      newErrors.email = 'Enter a valid email address';
+    }
+    if (!formData.contactNumber.trim()) {
+      newErrors.contactNumber = 'Contact number is required';
+    }
+    if (selectedServices.length === 0) {
+      newErrors.services = 'Select at least one service';
+    } else if (selectedServices.includes('Other') && !otherText.trim()) {
+      newErrors.services = 'Please type your answer for Other';
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleContinueToWhatsApp = () => {
+    if (!validateForm()) return;
+
     const message = `Hello, I would like to get a quote.\n\nCompany Name: ${formData.companyName}\nName: ${formData.name}\nEmail: ${formData.email}\nContact Number: ${formData.countryCode} ${formData.contactNumber}\nServices: ${displayServices.join(', ')}\nTarget Delivery Date: ${formatDate(targetDate)}`;
 
     const encodedMessage = encodeURIComponent(message);
@@ -306,9 +347,13 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
                       placeholder="e.g. ABC Sdn Bhd"
                       value={formData.companyName}
                       onChange={handleInputChange}
-                      className="pl-10 border-2 border-emerald-300 focus:border-emerald-500 focus:ring-emerald-500 bg-white"
+                      aria-invalid={!!errors.companyName}
+                      className={`pl-10 border-2 bg-white ${errors.companyName ? 'border-red-400 focus:border-red-500 focus:ring-red-500' : 'border-emerald-300 focus:border-emerald-500 focus:ring-emerald-500'}`}
                     />
                   </div>
+                  {errors.companyName && (
+                    <p className="text-xs text-red-500 mt-1">{errors.companyName}</p>
+                  )}
                 </div>
 
                 <div>
@@ -338,9 +383,13 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
                       placeholder="e.g. Jason Lim"
                       value={formData.name}
                       onChange={handleInputChange}
-                      className="pl-10 border-gray-200"
+                      aria-invalid={!!errors.name}
+                      className={`pl-10 ${errors.name ? 'border-red-400' : 'border-gray-200'}`}
                     />
                   </div>
+                  {errors.name && (
+                    <p className="text-xs text-red-500 mt-1">{errors.name}</p>
+                  )}
                 </div>
               </div>
 
@@ -374,9 +423,13 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
                       placeholder="e.g. jason@company.com"
                       value={formData.email}
                       onChange={handleInputChange}
-                      className="pl-10 border-gray-200"
+                      aria-invalid={!!errors.email}
+                      className={`pl-10 ${errors.email ? 'border-red-400' : 'border-gray-200'}`}
                     />
                   </div>
+                  {errors.email && (
+                    <p className="text-xs text-red-500 mt-1">{errors.email}</p>
+                  )}
                 </div>
 
                 <div>
@@ -417,10 +470,14 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
                         placeholder="Invalid number. e.g. 12-345 6789"
                         value={formData.contactNumber}
                         onChange={handleInputChange}
-                        className="border-gray-200"
+                        aria-invalid={!!errors.contactNumber}
+                        className={errors.contactNumber ? 'border-red-400' : 'border-gray-200'}
                       />
                     </div>
                   </div>
+                  {errors.contactNumber && (
+                    <p className="text-xs text-red-500 mt-1">{errors.contactNumber}</p>
+                  )}
                 </div>
               </div>
 
@@ -436,7 +493,8 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
                   <PopoverTrigger asChild>
                     <button
                       type="button"
-                      className="w-full h-9 flex items-center justify-between rounded-md border border-gray-200 bg-transparent px-3 py-1 text-sm text-left hover:border-emerald-300 transition-colors"
+                      aria-invalid={!!errors.services}
+                      className={`w-full h-9 flex items-center justify-between rounded-md border bg-transparent px-3 py-1 text-sm text-left transition-colors ${errors.services ? 'border-red-400 hover:border-red-500' : 'border-gray-200 hover:border-emerald-300'}`}
                     >
                       <span
                         className={
@@ -491,7 +549,15 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
                               <input
                                 type="text"
                                 value={otherText}
-                                onChange={(e) => setOtherText(e.target.value)}
+                                onChange={(e) => {
+                                  setOtherText(e.target.value);
+                                  setErrors((prev) => {
+                                    if (!prev.services) return prev;
+                                    const next = { ...prev };
+                                    delete next.services;
+                                    return next;
+                                  });
+                                }}
                                 onKeyDown={(e) => {
                                   if (
                                     e.key === 'Enter' &&
@@ -558,6 +624,9 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
                     </div>
                   </PopoverContent>
                 </Popover>
+                {errors.services && (
+                  <p className="text-xs text-red-500 mt-1">{errors.services}</p>
+                )}
               </div>
 
               {/* Target Delivery Date */}
