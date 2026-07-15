@@ -240,7 +240,7 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
     const message = `Hello, I would like to get a quote.\n\nCompany Name: ${formData.companyName}\nName: ${formData.name}\nEmail: ${formData.email}\nContact Number: ${formData.countryCode} ${formData.contactNumber}\nServices: ${displayServices.join(', ')}\nTarget Delivery Date: ${formatDate(targetDate)}`;
 
     const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
+    const whatsappUrl = `https://wa.me/60103746325?text=${encodedMessage}`;
     window.open(whatsappUrl, '_blank');
   };
 
