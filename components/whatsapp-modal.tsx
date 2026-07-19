@@ -139,6 +139,21 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
   const handleContinueToWhatsApp = () => {
     if (!validateForm()) return;
 
+    // Send email notification in the background (does not block WhatsApp)
+    fetch('/api/notify-lead', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        companyName: formData.companyName,
+        name: formData.name,
+        email: formData.email,
+        phone: `${formData.countryCode} ${formData.contactNumber}`,
+        services: displayServices.join(', '),
+      }),
+    }).catch((err) => {
+      console.error('Failed to send lead notification:', err);
+    });
+
     const message = `Hello, I would like to get a quote.\n\nCompany Name: ${formData.companyName}\nName: ${formData.name}\nEmail: ${formData.email}\nContact Number: ${formData.countryCode} ${formData.contactNumber}\nServices: ${displayServices.join(', ')}`;
 
     const encodedMessage = encodeURIComponent(message);
