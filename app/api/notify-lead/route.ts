@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
+import { db } from '@/lib/db';
+import { leads } from '@/lib/db/schema';
 
 export async function POST(request: Request) {
   try {
@@ -10,6 +12,19 @@ export async function POST(request: Request) {
         { error: 'Missing required fields' },
         { status: 400 }
       );
+    }
+
+    // Save the lead to the database (does not block the email if it fails)
+    try {
+      await db.insert(leads).values({
+        companyName,
+        name,
+        email,
+        phone: phone || '',
+        services: services || '',
+      });
+    } catch (dbErr) {
+      console.error('Failed to save lead to database:', dbErr);
     }
 
     const resend = new Resend(process.env.RESEND_API_KEY);
