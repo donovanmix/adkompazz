@@ -55,9 +55,8 @@ export async function POST(request: Request) {
       </div>`;
 
     const { error } = await resend.emails.send({
-      from: 'Adkompas Leads <onboarding@resend.dev>',
-      // TODO: switch to 'adkompas.sales@gmail.com' after verifying a domain at resend.com/domains
-      to: ['donovanmix@gmail.com'],
+      from: 'Adkompas Leads <leads@adkompas.com>',
+      to: ['kiensoon@adkompas.com'],
       subject: `New WhatsApp Lead: ${name} (${companyName})`,
       replyTo: email,
       html,
