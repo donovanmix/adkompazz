@@ -26,20 +26,28 @@ export function AuthForm({ mode }: AuthFormProps) {
     setError('');
     setLoading(true);
 
-    const result =
-      mode === 'sign-up'
-        ? await authClient.signUp.email({ name: name || email.split('@')[0], email, password })
-        : await authClient.signIn.email({ email, password });
+    try {
+      const result =
+        mode === 'sign-up'
+          ? await authClient.signUp.email({ name: name || email.split('@')[0], email, password })
+          : await authClient.signIn.email({ email, password });
 
-    setLoading(false);
+      if (result?.error) {
+        setError(result.error.message || 'Something went wrong. Please try again.');
+        return;
+      }
 
-    if (result.error) {
-      setError(result.error.message || 'Something went wrong. Please try again.');
-      return;
+      router.push('/admin');
+      router.refresh();
+    } catch (err) {
+      setError(
+        err instanceof Error && err.message
+          ? err.message
+          : 'Something went wrong. Please try again.'
+      );
+    } finally {
+      setLoading(false);
     }
-
-    router.push('/admin');
-    router.refresh();
   };
 
   return (
