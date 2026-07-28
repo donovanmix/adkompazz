@@ -159,6 +159,9 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
     const encodedMessage = encodeURIComponent(message);
     const whatsappUrl = `https://wa.me/60103746325?text=${encodedMessage}`;
     window.open(whatsappUrl, '_blank');
+
+    // Redirect to the thank-you page so conversion pixels can fire
+    window.location.href = '/thank-you';
   };
 
   return (
