@@ -8,6 +8,7 @@ declare global {
   interface Window {
     fbq?: (...args: unknown[]) => void;
     gtag?: (...args: unknown[]) => void;
+    dataLayer?: Record<string, unknown>[];
   }
 }
 
@@ -21,6 +22,14 @@ export function ThankYouContent() {
   useEffect(() => {
     if (fired.current) return;
     fired.current = true;
+
+    // Google Tag Manager: push a conversion event to the dataLayer.
+    // Use "lead_form_submitted" as the Custom Event trigger name in GTM.
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({
+      event: 'lead_form_submitted',
+      conversion_page: '/thank-you',
+    });
 
     // Meta Pixel: standard Lead conversion event
     if (typeof window.fbq === 'function') {
