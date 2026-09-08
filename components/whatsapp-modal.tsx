@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { getAttribution } from '@/lib/attribution';
 import { Dialog, DialogContent, DialogHeader } from '@/components/ui/dialog';
 import {
   Popover,
@@ -139,6 +140,9 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
   const handleContinueToWhatsApp = () => {
     if (!validateForm()) return;
 
+    // Capture where this visitor originally came from
+    const attribution = getAttribution();
+
     // Send email notification in the background (does not block WhatsApp)
     fetch('/api/notify-lead', {
       method: 'POST',
@@ -149,6 +153,7 @@ export function WhatsAppModal({ isOpen, onClose }: WhatsAppModalProps) {
         email: formData.email,
         phone: `${formData.countryCode} ${formData.contactNumber}`,
         services: displayServices.join(', '),
+        attribution,
       }),
     }).catch((err) => {
       console.error('Failed to send lead notification:', err);
