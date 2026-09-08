@@ -5,6 +5,7 @@ import { Instrument_Sans, Instrument_Serif, JetBrains_Mono } from 'next/font/goo
 import { Analytics } from '@vercel/analytics/next'
 import { WhatsAppFloatingButton } from '@/components/whatsapp-floating-button'
 import { TrackingPixels } from '@/components/tracking-pixels'
+import { AttributionTracker } from '@/components/attribution-tracker'
 import './globals.css'
 
 const instrumentSans = Instrument_Sans({ 
@@ -63,6 +64,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         </noscript>
         {/* End Google Tag Manager (noscript) */}
         {children}
+        <AttributionTracker />
         <WhatsAppFloatingButton />
         <TrackingPixels />
         <Analytics />

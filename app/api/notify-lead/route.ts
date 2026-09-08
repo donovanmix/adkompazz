@@ -5,7 +5,8 @@ import { leads } from '@/lib/db/schema';
 
 export async function POST(request: Request) {
   try {
-    const { companyName, name, email, phone, services } = await request.json();
+    const { companyName, name, email, phone, services, attribution } =
+      await request.json();
 
     if (!name || !email || !companyName) {
       return NextResponse.json(
@@ -13,6 +14,20 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
+
+    const a = attribution ?? {};
+    const track = {
+      channel: String(a.channel ?? ''),
+      sourceReferrer: String(a.sourceReferrer ?? ''),
+      entryLanding: String(a.entryLanding ?? ''),
+      utmSource: String(a.utmSource ?? ''),
+      utmMedium: String(a.utmMedium ?? ''),
+      utmCampaign: String(a.utmCampaign ?? ''),
+      utmTerm: String(a.utmTerm ?? ''),
+      utmContent: String(a.utmContent ?? ''),
+      gclid: String(a.gclid ?? ''),
+      fbclid: String(a.fbclid ?? ''),
+    };
 
     // Save the lead to the database (does not block the email if it fails)
     try {
@@ -22,6 +37,7 @@ export async function POST(request: Request) {
         email,
         phone: phone || '',
         services: services || '',
+        ...track,
       });
     } catch (dbErr) {
       console.error('Failed to save lead to database:', dbErr);
@@ -39,11 +55,67 @@ export async function POST(request: Request) {
       hour12: true,
     });
 
+    const esc = (s: string) =>
+      s
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+
     const row = (label: string, value: string) => `
       <tr>
         <td style="padding:12px 0;color:#6b7280;font-size:14px;border-bottom:1px solid #f3f4f6;width:160px;vertical-align:top;">${label}</td>
         <td style="padding:12px 0;color:#111827;font-size:14px;border-bottom:1px solid #f3f4f6;">${value}</td>
       </tr>`;
+
+    const channelColors: Record<string, string> = {
+      'Paid Search': '#2563eb',
+      'Paid Social': '#7c3aed',
+      Display: '#db2777',
+      Social: '#0ea5e9',
+      Organic: '#10b981',
+      Referral: '#f59e0b',
+      Email: '#6366f1',
+      Affiliate: '#0d9488',
+      Campaign: '#8b5cf6',
+      Direct: '#6b7280',
+    };
+    const channelLabel = track.channel || 'Unknown';
+    const channelColor = channelColors[track.channel] || '#6b7280';
+
+    const trackRows = [
+      track.utmSource && row('UTM Source', esc(track.utmSource)),
+      track.utmMedium && row('UTM Medium', esc(track.utmMedium)),
+      track.utmCampaign && row('UTM Campaign', esc(track.utmCampaign)),
+      track.utmTerm && row('UTM Term', esc(track.utmTerm)),
+      track.utmContent && row('UTM Content', esc(track.utmContent)),
+      track.gclid && row('Google Click ID', esc(track.gclid)),
+      track.fbclid && row('Meta Click ID', esc(track.fbclid)),
+      track.sourceReferrer &&
+        row(
+          'Referrer',
+          `<a href="${esc(track.sourceReferrer)}" style="color:#10b981;word-break:break-all;">${esc(track.sourceReferrer)}</a>`
+        ),
+      track.entryLanding &&
+        row(
+          'Entry Landing',
+          `<a href="${esc(track.entryLanding)}" style="color:#10b981;word-break:break-all;">${esc(track.entryLanding)}</a>`
+        ),
+    ]
+      .filter(Boolean)
+      .join('');
+
+    const trackingSection = `
+      <p style="margin:28px 0 16px;color:#9ca3af;font-size:12px;letter-spacing:1.5px;font-weight:bold;">TRACKING INFO</p>
+      <table style="width:100%;border-collapse:collapse;">
+        <tr>
+          <td style="padding:12px 0;color:#6b7280;font-size:14px;border-bottom:1px solid #f3f4f6;width:160px;vertical-align:top;">Channel</td>
+          <td style="padding:12px 0;border-bottom:1px solid #f3f4f6;">
+            <span style="display:inline-block;background:${channelColor};color:#ffffff;font-size:12px;font-weight:bold;padding:4px 12px;border-radius:9999px;">${esc(channelLabel)}</span>
+          </td>
+        </tr>
+        ${trackRows}
+      </table>`;
 
     const html = `
       <div style="font-family:Arial,Helvetica,sans-serif;max-width:560px;margin:0 auto;background:#ffffff;">
@@ -62,6 +134,7 @@ export async function POST(request: Request) {
             ${row('Services', services)}
             ${row('Submitted At', submittedAt)}
           </table>
+          ${trackingSection}
           <a href="https://wa.me/${phone.replace(/[^0-9]/g, '')}"
              style="display:block;margin-top:24px;background:#10b981;color:#ffffff;text-decoration:none;text-align:center;padding:14px 0;border-radius:8px;font-size:15px;font-weight:bold;">
             Reply on WhatsApp

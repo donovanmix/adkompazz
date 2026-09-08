@@ -9,6 +9,17 @@ export const leads = pgTable('leads', {
   services: text('services').notNull(),
   status: text('status').notNull().default('new'),
   notes: text('notes').notNull().default(''),
+  // Attribution / tracking
+  channel: text('channel').notNull().default(''),
+  sourceReferrer: text('source_referrer').notNull().default(''),
+  entryLanding: text('entry_landing').notNull().default(''),
+  utmSource: text('utm_source').notNull().default(''),
+  utmMedium: text('utm_medium').notNull().default(''),
+  utmCampaign: text('utm_campaign').notNull().default(''),
+  utmTerm: text('utm_term').notNull().default(''),
+  utmContent: text('utm_content').notNull().default(''),
+  gclid: text('gclid').notNull().default(''),
+  fbclid: text('fbclid').notNull().default(''),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
